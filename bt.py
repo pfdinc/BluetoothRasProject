@@ -1,16 +1,32 @@
 #!/usr/bin/env python
 # simple inquiry example
+import sys
 import bluetooth
 
-print("performing inquiry...")
+if len(sys.argv) < 2:
+    print("usage: sdp-browse <addr>")
+    print("   addr can be a bluetooth address, \"localhost\", or \"all\"")
+    sys.exit(2)
 
-nearby_devices = bluetooth.discover_devices(
-        duration=8, lookup_names=True, flush_cache=True, lookup_class=False)
+target = sys.argv[1]
+if target == "all": target = None
 
-print("found %d devices" % len(nearby_devices))
+services = bluetooth.find_service(address=target)
 
-for addr, name in nearby_devices:
-    try:
-        print("  %s - %s" % (addr, name))
-    except UnicodeEncodeError:
-        print("  %s - %s" % (addr, name.encode('utf-8', 'replace')))
+if len(services) > 0:
+    print("found %d services on %s" % (len(services), sys.argv[1]))
+    print("")
+else:
+    print("no services found")
+
+for svc in services:
+    print("Service Name: %s"    % svc["name"])
+    print("    Host:        %s" % svc["host"])
+    print("    Description: %s" % svc["description"])
+    print("    Provided By: %s" % svc["provider"])
+    print("    Protocol:    %s" % svc["protocol"])
+    print("    channel/PSM: %s" % svc["port"])
+    print("    svc classes: %s "% svc["service-classes"])
+    print("    profiles:    %s "% svc["profiles"])
+    print("    service id:  %s "% svc["service-id"])
+    print("")
