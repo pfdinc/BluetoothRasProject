@@ -2,6 +2,7 @@
 # simple inquiry example
 import bluetooth
 
+print "Running...."
 nearby_devices = bluetooth.discover_devices(lookup_names=True)
 print("found %d devices" % len(nearby_devices))
 
